@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Underrated Champions</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1b5e20, #4caf50);
+      color: #1b1b1b;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px;
+    }
+    .container {
+      background: #ffffff;
+      padding: 30px 50px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.3em;
+      color: #1b5e20;
+      margin-bottom: 5px;
+      border-bottom: 3px solid #388e3c;
+      display: inline-block;
+      padding-bottom: 5px;
+    }
+    h2 {
+      font-size: 1.5em;
+      color: #2e7d32;
+      border-bottom: 2px solid #c8e6c9;
+      padding-bottom: 10px;
+      margin-top: 30px;
+    }
+    .matches, .points-table, .final-match {
+      margin-top: 20px;
+      text-align: left;
+    }
+    .match-card {
+      background: #e8f5e9;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border-left: 6px solid #43a047;
+    }
+    .match-info-heading {
+      font-weight: bold;
+      font-size: 1.05em;
+      color: #2e7d32;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .input-group input {
+      width: 90px;
+      padding: 7px;
+      text-align: center;
+      border: 1px solid #a5d6a7;
+      border-radius: 5px;
+      background-color: #ffffff;
+      transition: all 0.2s ease;
+    }
+    .input-group input:focus {
+      border-color: #2e7d32;
+      box-shadow: 0 0 6px rgba(46, 125, 50, 0.35);
+      outline: none;
+    }
+    button {
+      padding: 8px 14px;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: background-color 0.2s ease, transform 0.12s ease;
+    }
+    button:hover { background-color: #1b5e20; transform: translateY(-2px); }
+    .final-match {
+      background-color: #c8e6c9;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      margin-top: 30px;
+    }
+    .final-input { display:flex; justify-content:center; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
+    .final-input select, .final-scores input {
+      padding: 8px;
+      border: 1px solid #66bb6a;
+      border-radius: 5px;
+      background-color: #ffffff;
+      font-size: 1em;
+    }
+    #final-winner { font-size: 1.4em; font-weight:700; color:#d32f2f; animation: fadeIn 0.8s ease-in-out; opacity:0; margin-top:12px; }
+    .result-msg { font-style: italic; color: #1b5e20; margin-top:6px; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px);} to{ opacity:1; transform:none; } }
+    table { width:100%; border-collapse: collapse; margin-top:12px; box-shadow:0 4px 8px rgba(0,0,0,0.08);}
+    th, td { padding:12px; border:1px solid #e0e0e0; text-align:left; font-size:0.95em; }
+    th { background-color:#2e7d32; color:white; font-weight:normal; }
+    tr:nth-child(even){ background-color:#f1f8e9; }
+    tr.updated { animation: fadeIn 0.6s; }
+    .match-date { color:#616161; font-size:0.85em; }
+    .controls { display:flex; gap:10px; margin-top:8px; flex-wrap:wrap; }
+    .small { padding:6px 10px; font-size:0.9em; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Underrated Champions</h1>
+
+    <div class="matches">
+      <h2>Group Stage Matches</h2>
+
+      <div class="match-card">
+        <span class="match-info-heading">Match 1: Hitman vs Amrites <span id="date1" class="match-date"></span></span>
+        <div class="input-group">
+          <input type="number" id="h1_runs" placeholder="Hitman Runs" />
+          <input type="number" id="h1_overs" placeholder="Hitman Overs (e.g. 10.3)" step="0.1" />
+          <input type="number" id="a1_runs" placeholder="Amrites Runs" />
+          <input type="number" id="a1_overs" placeholder="Amrites Overs" step="0.1" />
+          <button onclick="saveResult('h1','a1','Hitman','Amrites',1,'result-msg1')">Save Result</button>
+        </div>
+        <p id="result-msg1" class="result-msg"></p>
+      </div>
+
+      <div class="match-card">
+        <span class="match-info-heading">Match 2: Aman vs Darksoul <span id="date2" class="match-date"></span></span>
+        <div class="input-group">
+          <input type="number" id="m2_runs" placeholder="Aman Runs" />
+          <input type="number" id="m2_overs" placeholder="Aman Overs" step="0.1" />
+          <input type="number" id="d2_runs" placeholder="Darksoul Runs" />
+          <input type="number" id="d2_overs" placeholder="Darksoul Overs" step="0.1" />
+          <button onclick="saveResult('m2','d2','Aman','Darksoul',2,'result-msg2')">Save Result</button>
+        </div>
+        <p id="result-msg2" class="result-msg"></p>
+      </div>
+
+      <div class="match-card">
+        <span class="match-info-heading">Match 3: Hitman vs Darksoul <span id="date3" class="match-date"></span></span>
+        <div class="input-group">
+          <input type="number" id="h3_runs" placeholder="Hitman Runs" />
+          <input type="number" id="h3_overs" placeholder="Hitman Overs" step="0.1" />
+          <input type="number" id="d3_runs" placeholder="Darksoul Runs" />
+          <input type="number" id="d3_overs" placeholder="Darksoul Overs" step="0.1" />
+          <button onclick="saveResult('h3','d3','Hitman','Darksoul',3,'result-msg3')">Save Result</button>
+        </div>
+        <p id="result-msg3" class="result-msg"></p>
+      </div>
+
+      <div class="match-card">
+        <span class="match-info-heading">Match 4: Amrites vs Aman <span id="date4" class="match-date"></span></span>
+        <div class="input-group">
+          <input type="number" id="a4_runs" placeholder="Amrites Runs" />
+          <input type="number" id="a4_overs" placeholder="Amrites Overs" step="0.1" />
+          <input type="number" id="m4_runs" placeholder="Aman Runs" />
+          <input type="number" id="m4_overs" placeholder="Aman Overs" step="0.1" />
+          <button onclick="saveResult('a4','m4','Amrites','Aman',4,'result-msg4')">Save Result</button>
+        </div>
+        <p id="result-msg4" class="result-msg"></p>
+      </div>
+
+      <div class="match-card">
+        <span class="match-info-heading">Match 5: Hitman vs Aman <span id="date5" class="match-date"></span></span>
+        <div class="input-group">
+          <input type="number" id="h5_runs" placeholder="Hitman Runs" />
+          <input type="number" id="h5_overs" placeholder="Hitman Overs" step="0.1" />
+          <input type="number" id="m5_runs" placeholder="Aman Runs" />
+          <input type="number" id="m5_overs" placeholder="Aman Overs" step="0.1" />
+          <button onclick="saveResult('h5','m5','Hitman','Aman',5,'result-msg5')">Save Result</button>
+        </div>
+        <p id="result-msg5" class="result-msg"></p>
+      </div>
+
+      <div class="match-card">
+        <span class="match-info-heading">Match 6: Darksoul vs Amrites <span id="date6" class="match-date"></span></span>
+        <div class="input-group">
+          <input type="number" id="d6_runs" placeholder="Darksoul Runs" />
+          <input type="number" id="d6_overs" placeholder="Darksoul Overs" step="0.1" />
+          <input type="number" id="a6_runs" placeholder="Amrites Runs" />
+          <input type="number" id="a6_overs" placeholder="Amrites Overs" step="0.1" />
+          <button onclick="saveResult('d6','a6','Darksoul','Amrites',6,'result-msg6')">Save Result</button>
+        </div>
+        <p id="result-msg6" class="result-msg"></p>
+      </div>
+
+    </div>
+
+    <div class="points-table">
+      <h2>Points Table</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Team</th>
+            <th>M</th>
+            <th>Points</th>
+            <th>Wins</th>
+            <th>Draws</th>
+            <th>Losses</th>
+            <th>NRR</th>
+          </tr>
+        </thead>
+        <tbody id="standings"></tbody>
+      </table>
+
+      <div class="controls">
+        <button class="small" onclick="downloadPointsTable()">Download Points Table (CSV)</button>
+        <button class="small" onclick="createAndDownloadZip()">Download All Data (ZIP)</button>
+        <button class="small" onclick="resetTournament()">Reset Tournament</button>
+      </div>
+    </div>
+
+    <div class="final-match">
+      <h2>The Grand Final</h2>
+      <div class="final-input">
+        <select id="team1-final"></select>
+        <span> vs </span>
+        <select id="team2-final"></select>
+      </div>
+      <div class="final-scores">
+        <input type="number" id="final-score-1" placeholder="Score 1" />
+        <input type="number" id="final-score-2" placeholder="Score 2" />
+      </div>
+      <button onclick="calculateFinal()">Declare Winner</button>
+      <p id="final-winner"></p>
+    </div>
+
+    <div style="text-align:center; margin-top:14px;">
+      <small style="color:#fafafa55;">This file is standalone — open it in a browser to run the tournament manager.</small>
+    </div>
+  </div>
+
+  <script>
+    let teams = {
+      'Hitman': { points: 0, wins: 0, draws: 0, losses: 0, matchesPlayed: 0, runsScored: 0, oversFaced: 0, runsConceded: 0, oversBowled: 0 },
+      'Aman': { points: 0, wins: 0, draws: 0, losses: 0, matchesPlayed: 0, runsScored: 0, oversFaced: 0, runsConceded: 0, oversBowled: 0 },
+      'Darksoul': { points: 0, wins: 0, draws: 0, losses: 0, matchesPlayed: 0, runsScored: 0, oversFaced: 0, runsConceded: 0, oversBowled: 0 },
+      'Amrites': { points: 0, wins: 0, draws: 0, losses: 0, matchesPlayed: 0, runsScored: 0, oversFaced: 0, runsConceded: 0, oversBowled: 0 }
+    };
+
+    const savedMatches = new Set();
+
+    function calculateNRR(team) {
+      const runRateScored = team.oversFaced > 0 ? team.runsScored / team.oversFaced : 0;
+      const runRateConceded = team.oversBowled > 0 ? team.runsConceded / team.oversBowled : 0;
+      const diff = runRateScored - runRateConceded;
+      return (diff >= 0 ? "+" : "") + diff.toFixed(3);
+    }
+
+    function isValidOvers(overs) {
+      // Accept integer overs or decimal where decimal part is 0-5 (balls)
+      if (isNaN(overs)) return false;
+      const str = String(overs);
+      if (!str.includes('.')) return true;
+      const parts = str.split('.');
+      if (parts.length !== 2) return false;
+      const balls = parseInt(parts[1]);
+      return parts[1].length <= 2 && balls >= 0 && balls <= 5;
+    }
+
+    function updateTable() {
+      const standingsBody = document.getElementById('standings');
+      standingsBody.innerHTML = '';
+
+      const sortedTeams = Object.keys(teams).sort((a, b) => {
+        if (teams[b].points !== teams[a].points) return teams[b].points - teams[a].points;
+        // compare numeric NRR
+        const nrrA = parseFloat(calculateNRR(teams[a]));
+        const nrrB = parseFloat(calculateNRR(teams[b]));
+        return nrrB - nrrA;
+      });
+
+      sortedTeams.forEach(teamName => {
+        const teamData = teams[teamName];
+        const row = standingsBody.insertRow();
+        row.classList.add("updated");
+        row.innerHTML = `
+          <td>${teamName}</td>
+          <td>${teamData.matchesPlayed}</td>
+          <td>${teamData.points}</td>
+          <td>${teamData.wins}</td>
+          <td>${teamData.draws}</td>
+          <td>${teamData.losses}</td>
+          <td>${calculateNRR(teamData)}</td>
+        `;
+      });
+
+      saveState();
+      autoFillFinalTeams();
+    }
+
+    function saveResult(id1, id2, team1Name, team2Name, matchId, resultId) {
+      if (savedMatches.has(matchId)) {
+        alert("This match result has already been saved.");
+        return;
+      }
+
+      const runs1 = parseInt(document.getElementById(`${id1}_runs`).value);
+      const overs1 = parseFloat(document.getElementById(`${id1}_overs`).value);
+      const runs2 = parseInt(document.getElementById(`${id2}_runs`).value);
+      const overs2 = parseFloat(document.getElementById(`${id2}_overs`).value);
+
+      if ([runs1, overs1, runs2, overs2].some(val => isNaN(val))) {
+        alert("Please enter valid scores and overs.");
+        return;
+      }
+      if (!isValidOvers(overs1) || !isValidOvers(overs2)) {
+        alert("Invalid overs format. Use integer overs or decimals with balls 0-5 (e.g. 10.3).");
+        return;
+      }
+
+      teams[team1Name].matchesPlayed++;
+      teams[team2Name].matchesPlayed++;
+
+      teams[team1Name].runsScored += runs1;
+      teams[team1Name].oversFaced += overs1;
+      teams[team1Name].runsConceded += runs2;
+      teams[team1Name].oversBowled += overs2;
+
+      teams[team2Name].runsScored += runs2;
+      teams[team2Name].oversFaced += overs2;
+      teams[team2Name].runsConceded += runs1;
+      teams[team2Name].oversBowled += overs1;
+
+      let winnerMsg = "";
+      if (runs1 > runs2) {
+        teams[team1Name].points += 3;
+        teams[team1Name].wins++;
+        teams[team2Name].losses++;
+        winnerMsg = `${team1Name} won by ${runs1 - runs2} runs.`;
+      } else if (runs2 > runs1) {
+        teams[team2Name].points += 3;
+        teams[team2Name].wins++;
+        teams[team1Name].losses++;
+        winnerMsg = `${team2Name} won by ${runs2 - runs1} runs.`;
+      } else {
+        teams[team1Name].points++;
+        teams[team2Name].points++;
+        teams[team1Name].draws++;
+        teams[team2Name].draws++;
+        winnerMsg = "The match ended in a draw.";
+      }
+
+      document.getElementById(resultId).textContent = winnerMsg;
+      savedMatches.add(matchId);
+
+      updateTable();
+    }
+
+    function setDates() {
+      const today = new Date();
+      const options = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+      const todayString = today.toLocaleDateString('en-US', options);
+      for (let i=1;i<=6;i++){
+        const dateElement = document.getElementById('date'+i);
+        if (dateElement) dateElement.textContent = `Date: ${todayString}`;
+      }
+    }
+
+    function autoFillFinalTeams() {
+      const sortedTeams = Object.keys(teams).sort((a,b) => {
+        if (teams[b].points !== teams[a].points) return teams[b].points - teams[a].points;
+        return parseFloat(calculateNRR(teams[b])) - parseFloat(calculateNRR(teams[a]));
+      });
+      const t1 = document.getElementById('team1-final');
+      const t2 = document.getElementById('team2-final');
+      if (sortedTeams.length >= 2) {
+        t1.innerHTML = `<option value="${sortedTeams[0]}">${sortedTeams[0]}</option>`;
+        t2.innerHTML = `<option value="${sortedTeams[1]}">${sortedTeams[1]}</option>`;
+      } else {
+        t1.innerHTML = '';
+        t2.innerHTML = '';
+      }
+    }
+
+    function calculateFinal() {
+      const team1 = document.getElementById('team1-final').value;
+      const team2 = document.getElementById('team2-final').value;
+      const score1 = parseInt(document.getElementById('final-score-1').value);
+      const score2 = parseInt(document.getElementById('final-score-2').value);
+      const winnerDisplay = document.getElementById('final-winner');
+
+      if (team1 === '' || team2 === '') { alert("Finalists not available yet."); return; }
+      if (isNaN(score1) || isNaN(score2)) { alert("Please enter scores for the final."); return; }
+
+      let winner = '';
+      if (score1 > score2) winner = team1;
+      else if (score2 > score1) winner = team2;
+      else winner = "It's a draw! No winner.";
+
+      winnerDisplay.textContent = `🏆 ${winner} are the Champions! 🏆`;
+      winnerDisplay.style.opacity = '1';
+      saveState();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('tournamentData', JSON.stringify(teams));
+        localStorage.setItem('savedMatches', JSON.stringify(Array.from(savedMatches)));
+        localStorage.setItem('finalWinner', document.getElementById('final-winner').textContent || '');
+      } catch (e) {
+        console.warn('Could not save state:', e);
+      }
+    }
+
+    function loadState() {
+      try {
+        const data = localStorage.getItem('tournamentData');
+        const matches = localStorage.getItem('savedMatches');
+        const finalWinner = localStorage.getItem('finalWinner');
+        if (data) {
+          const parsed = JSON.parse(data);
+          Object.keys(parsed).forEach(k => { if (teams[k]) teams[k] = parsed[k]; });
+        }
+        if (matches) {
+          JSON.parse(matches).forEach(m => savedMatches.add(m));
+        }
+        if (finalWinner) {
+          document.getElementById('final-winner').textContent = finalWinner;
+          if (finalWinner) document.getElementById('final-winner').style.opacity = '1';
+        }
+      } catch (e) {
+        console.warn('Could not load state:', e);
+      }
+    }
+
+    function resetTournament() {
+      if (!confirm('Are you sure you want to reset the tournament?')) return;
+      Object.keys(teams).forEach(t => {
+        teams[t] = { points:0, wins:0, draws:0, losses:0, matchesPlayed:0, runsScored:0, oversFaced:0, runsConceded:0, oversBowled:0 };
+      });
+      savedMatches.clear();
+      document.getElementById('standings').innerHTML = '';
+      document.getElementById('final-winner').textContent = '';
+      localStorage.removeItem('tournamentData');
+      localStorage.removeItem('savedMatches');
+      localStorage.removeItem('finalWinner');
+      updateTable();
+    }
+
+    function downloadPointsTable() {
+      const rows = document.querySelectorAll('#standings tr');
+      let csv = 'Team,M,Points,Wins,Draws,Losses,NRR\n';
+      rows.forEach(r => {
+        const cols = Array.from(r.cells).map(c => c.textContent.replace(/,/g,''));
+        csv += cols.join(',') + '\n';
+      });
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const filename = 'points_table.csv';
+      if (window.saveAs) {
+        saveAs(blob, filename);
+      } else {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+      }
+    }
+
+    function createAndDownloadZip() {
+      const zip = new JSZip();
+      // points table
+      const rows = document.querySelectorAll('#standings tr');
+      let csv = 'Team,M,Points,Wins,Draws,Losses,NRR\n';
+      rows.forEach(r => {
+        const cols = Array.from(r.cells).map(c => c.textContent.replace(/,/g,''));
+        csv += cols.join(',') + '\n';
+      });
+      zip.file('points_table.csv', csv);
+
+      // final winner
+      const winnerText = document.getElementById('final-winner').textContent || 'No final winner declared.';
+      zip.file('final_winner.txt', winnerText);
+
+      // save current HTML snapshot
+      zip.file('tournament_snapshot.txt', JSON.stringify({ teams, savedMatches: Array.from(savedMatches), finalWinner: winnerText }, null, 2));
+
+      zip.generateAsync({type:'blob'}).then(content => {
+        if (window.saveAs) saveAs(content, 'tournament_data.zip');
+        else {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(content);
+          link.download = 'tournament_data.zip';
+          link.click();
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setDates();
+      loadState();
+      updateTable();
+    });
+  </script>
+</body>
+</html>
